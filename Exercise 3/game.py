@@ -40,7 +40,7 @@ def remove_spaces(text):
     >>> remove_spaces("   ")
     ''
     """
-    return text.rstrip().lstrip()
+    return text.strip()
 
 
 
