@@ -78,11 +78,11 @@ def display_room(room):
 
     Note: <BLANKLINE> here means that doctest should expect a blank line.
     """
-    print()
+    print("")
     print(room['name'].upper())
-    print()
+    print("")
     print(room['description'])
-    print()
+    print("")
     
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
