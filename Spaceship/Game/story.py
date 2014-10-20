@@ -170,8 +170,9 @@ character_barman = {
 room_mountain = {
     'name': 'the Mountains',
 
-    'description': """
-    """, 
+    'description': """The mountain spans for miles around you, high snow-covered peaks surround a small camp where 
+    the Tribes' people are hiding. Large pens are visible, clearly herding mountain goats and other animals for the
+    Tribes people to use in their day to day lives. """, 
 
     'exits': {},
 
@@ -182,9 +183,9 @@ room_mountain = {
 room_shipwreck = {
     'name': 'the shipwreck',
 
-    'description': """
-    """, 
-
+    'description': """An old looking ship that must have come aground during a storm. The whole ship is rotting 
+    away in the sand, making the name impossible to read. This is a sad sight, maybe that drunk sailor knows more...""",
+ 
     'exits': {},
 
     'items': [],
@@ -194,8 +195,10 @@ room_shipwreck = {
 room_pub = {
     'name': 'the Pub',
 
-    'description': """
-    """, 
+    'description': """An old western themed tavern with bar stools littered around the circle tables. A pool table in one corner
+    next to a jukebox playing what sounds like the theme from 'The Good, the Bad and the Ugly'. There's a crowd of people watching
+    a boxing match on the T.V., while one patron is passed out in a pool of his own sick... classy place, maybe the bar tender
+    can tell me more about this place... """,
 
     'exits': {},
 
@@ -206,8 +209,10 @@ room_pub = {
 room_scrapheap = {
     'name': 'the scrapheap',
 
-    'description': """
-    """,
+    'description': """There's a lot of scrap piles scattered around the yard. The owner must collect debris from 
+    crashed vehicles and sell them to customers as there are many clients wandering around the yard looking for 
+    spare parts. A large mechanical crusher is being operated at the end of the yard, crushing useless metals into
+    useable materials.""",
 
     'exits': {},
 
@@ -218,8 +223,9 @@ room_scrapheap = {
 room_hardware = {
     'name': 'the hardware store',
 
-    'description': """
-    """, 
+    'description': """A small store filled with items that may come in handy when repairing your ship, many other customers
+     are talking to what appears to be the owner about something or other. There is a large scrap yard out the back with 
+     all sorts of tools and spare parts lying about, maybe the owner or his engineers can help me fix the ship. """,
 
     'exits': {},
 
@@ -230,8 +236,9 @@ room_hardware = {
 room_mayorhouse = {
     'name': 'the Mayors house',
 
-    'description': """
-    """, 
+    'description': """The mayor of the town's house, looks like he is paid very well. His house is enormous with lavish
+    paintings of himself placed in pretty much every room, luxurious furniture everywhere... this man clearly has a lot of power
+    and likes to look at himself... a lot.""",
 
     'exits': {},
 
@@ -242,8 +249,9 @@ room_mayorhouse = {
 room_cabin = {
     'name': 'the Cabin',
 
-    'description': """
-    """, 
+    'description':  """A hunter's cabin, fully decorated with trophies and hunting weapons from around the land. 
+    A large stag's head is mounted above the fireplace, obviously the hunter's prize catch. There is a meaty smell radiating from the fire,
+    the hunter must be cooking his latest catch. """,
 
     'exits': {},
 
@@ -254,8 +262,10 @@ room_cabin = {
 room_caves = {
     'name': 'the Caves',
 
-    'description': """
-    """, 
+    'description': """The cave is narrow to start with but expands out into a large cavern area where a tribe of people
+    are sat around a campfire cooking and chatting. The cave lights up as rays of sunshine enter the dark hole, illuminating
+    several tunnels that appear to have been blocked off. A strange smell is radiating from the centre of the camp, 
+    the Tribe must be cooking some exotic meal.""",
 
     'exits': {},
 
