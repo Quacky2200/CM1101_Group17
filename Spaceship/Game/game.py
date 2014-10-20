@@ -1,11 +1,9 @@
 #!/usr/bin/python3
-
-from map import rooms
-from player import *
-from items import *
+from storyactions import *
 from gameparser import *
+import player
 from time import sleep
-
+converses = {'north':'south', 'east':'west', 'up':'down', 'left':'right', 'inside':'outside', 'upstairs':'downstairs'}
 def print_wait(str, time = 1):
     print(str)
     sleep(time)
@@ -29,7 +27,32 @@ def weight_of_items(items):
         else:
             result.append(float(item['weight'].lower().replace('g','')) / 1000)
     return sum(result)
+def return_converse(text):
+    """ This function allows us to return the reverse of a direction 
+    such as North is the converse of South. It has to use the converses dictionary 
+    so you can add your own. For Example:
+    >>> return_converse('north')
+    'south'
+    >>> return_converse('up')
+    'down'
+    >>> return_converse('')
 
+    """
+    if text in converses.keys():
+        return list(converses.values())[list(converses.keys()).index(text)]
+    elif text in converses.values():
+        return list(converses.keys())[list(converses.values()).index(text)]
+def fix_exits():
+    for room in rooms:
+        for direction, leads_to in rooms[room]['exits'].items():
+            if not return_converse(direction) in rooms[leads_to]['exits']:
+                rooms[leads_to]['exits'][return_converse(direction)] = room
+def item_in_inventory(item_id, enabled = ''):
+    if enabled != '':
+        return item_id in [item['id'] for item in player.inventory if enabled in item['enabled']]
+    else:
+        return item_id in [item['id'] for item in player.inventory]
+#Normal
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
     returns a comma-separated list of item names (as a string). For example:
@@ -51,8 +74,6 @@ def list_of_items(items):
     for item in items:
         result += item['name'] + (', ' if not item == items[len(items) - 1] else '')
     return result
-
-
 def print_room_items(room):
     """This function takes a room as an input and nicely displays a list of items
     found in this room (followed by a blank line). If there are no items in
@@ -78,9 +99,6 @@ def print_room_items(room):
     if len(room['items']) != 0:
         print("There is " + list_of_items(room['items']) + " here.")
         print("")
-    
-
-
 def print_inventory_items(items):
     """This function takes a list of inventory items and displays it nicely, in a
     manner similar to print_room_items(). The only difference is in formatting:
@@ -91,10 +109,9 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    print("You have " + list_of_items(items) + ".")
-    print('')
-
-
+    if len(items) > 0:
+        print("You have " + list_of_items(items) + ".")
+        print('')
 def print_room(room):
     """This function takes a room as an input and nicely displays its name
     and description. The room argument is a dictionary with entries "name",
@@ -203,11 +220,12 @@ def print_menu(exits, room_items, inv_items):
     for direction in exits:
         # Print the exit name and where it leads to
         print_exit(direction, exit_leads_to(exits, direction))
-    for item in room_items:
+    for item in [items for items in room_items if 'take' in items['enabled']]:
         print('TAKE ' + item['id'].upper() + ' to take ' + item['name'])
-    for item in inv_items:
+    for item in [items for items in inv_items if 'drop' in items['enabled']]:
         print('DROP ' + item['id'].upper() + ' to drop your ' + item['id'])
-    
+    for item in [items for items in inv_items if 'use' in items['enabled']]:
+        print('USE ' + item['id'].upper() + ' to use your ' + item['id'])
     print("What do you want to do?")
 def is_valid_exit(exits, chosen_exit):
     """This function checks, given a dictionary "exits" (see map.py) and
@@ -226,15 +244,43 @@ def is_valid_exit(exits, chosen_exit):
     True
     """
     return chosen_exit in exits
+def execute_item_action(item_id, action, item_id2 = ''):
+    if item_id in item_actions:
+        itemaction = item_actions[item_id]
+        if action in itemaction.keys():
+            if itemaction[action] != None and callable(itemaction[action]):
+                if action == use:
+                    itemaction[action](item_id, item_id2)
+                else:
+                    itemaction[action]()
+def execute_character_action(charactername, action, item_id = ''):
+    if charactername in character_actions.keys():
+        characteraction = character_actions[charactername]
+        if action in characteraction:
+            if characteraction[action] != None and callable(characteraction[action]):
+                if item_id != '':
+                    characteraction[action](item_id)
+                else:
+                    characteraction[action](charactername)
+def execute_room_action(action):
+    if player.current_room['name'] in room_actions.keys():
+        roomaction = room_actions[player.current_room['name']]
+        if action in roomaction:
+            if roomaction[action] != None and callable(roomaction[action]):
+                roomaction[action]()
 def execute_go(direction):
     """This function, given the direction (e.g. "south") updates the current room
     to reflect the movement of the player if the direction is a valid exit
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    global current_room
-    if is_valid_exit(current_room['exits'], direction):
-        current_room = move(current_room['exits'], direction)
+    if is_valid_exit(player.current_room['exits'], direction):
+        #Run 'out' action if there is one 
+        execute_room_action('out')
+        #Swap rooms
+        player.current_room = move(player.current_room['exits'], direction)
+        #Run the 'in' action if there is one
+        execute_room_action('in')
     else:
         print("You cannot go there.")
 def execute_take(item_id):
@@ -243,14 +289,15 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    for item in current_room['items']:
-        tempinventory = inventory[:]
+    for item in [items for items in player.current_room['items'] if take in items['enabled']]:
+        tempinventory = player.inventory[:]
         tempinventory.append(item)
-        if item['id'] == item_id and weight_of_items(tempinventory) < max_weight and len(inventory) < 4:
-            inventory.append(item)
-            current_room['items'].remove(item)
+        if item['id'] == item_id and weight_of_items(tempinventory) < max_weight and len(player.inventory) < 4:
+            player.inventory.append(item)
+            player.current_room['items'].remove(item)
+            execute_item_action(item['id'], 'take')
             return
-        elif item['id'] == item_id and weight_of_items(tempinventory) > max_weight or len(inventory) == 4:
+        elif item['id'] == item_id and weight_of_items(tempinventory) > max_weight or len(player.inventory) == 4:
             print('You only have 2 hands (and a full bag)')
             return
     print('You cannot take that.')
@@ -259,24 +306,36 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    for item in inventory:
+    for item in [items for items in player.inventory if drop in items['enabled']]:
         if item['id'] == item_id:
-            current_room['items'].append(item)
-            inventory.remove(item)
+            player.current_room['items'].append(item)
+            player.inventory.remove(item)
+            execute_item_action(item['id'], 'drop')
             return
     print('You cannot drop that.')
-def execute_give(item_id):
-    if current_room['name'] == 'Reception':
-        for item in inventory:
-            if item['id'] == item_id:
-                current_room['given_items'].append(item)
-                inventory.remove(item)
-                print('Thanks, I was looking for ' + item['name'] + '.')
-                if len(current_room['given_items']) == 12:
-                    print('You\'ve won! Well done! Now let\'s go home')
-                    quit()
+def execute_give(item_id, person):
+    if item_in_inventory(item_id):
+        for character in player.current_room['characters']:
+            if character['name'].replace(' ', '').lower() == person:
+                execute_character_action(character['name'],'give', item_id)
                 return
     print('You cannot give that')
+def execute_use(item_id1, item_id2 = ''):
+    if item_id2 != '':
+        if item_in_inventory(item_id1, use) and item_in_inventory(item_id2, use):
+            return_item_action(item_id1, use, item_id2)
+            return
+    else:
+        if item_in_inventory(item_id1, use):
+            execute_item_action(item_id1, use)
+            return
+    print('You cannot use that')
+def execute_talk(person):
+    for character in player.current_room['characters']:
+        if character['name'].replace(' ','').lower() == person:
+            execute_character_action(character['name'],'talk')
+            return
+    print('Who\'s that?')
 def execute_command(command):
     """This function takes a command (a list of words as returned by
     normalise_input) and, depending on the type of action (the first word of
@@ -284,28 +343,44 @@ def execute_command(command):
     execute_take, or execute_drop, supplying the second word as the argument.
 
     """
+    if len(command) == 0:
+        print_wait('Nothing was entered...')
+        return
     if command[0] == "go":
         if len(command) > 1:
             execute_go(command[1])
         else:
-            print("Go where?")
+            print_wait("Go where?")
 
     elif command[0] == "take":
         if len(command) > 1:
             execute_take(command[1])
         else:
-            print("Take what?")
+            print_wait("Take what?")
 
     elif command[0] == "drop":
         if len(command) > 1:
             execute_drop(command[1])
         else:
-            print("Drop what?")
+            print_wait("Drop what?")
     elif command[0] == 'give':
         if len(command) > 1:
             execute_give(command[1])
         else:
-            print('Give what?')
+            print_wait('Give what?')
+    elif command[0] == 'use':
+        if len(command) > 1:
+            if len(command) == 3:
+                execute_use(command[1], command[2])
+            else:
+                execute_use(command[1])
+        else:
+            print_wait('Use what?')
+    elif command[0] == 'talk':
+        if len(command) > 1:
+            execute_talk(command[1])
+        else:
+            print_wait('Talk to whom?')
     elif command[0] == "quit":
         #Check if the player wants to continue, otherwise they risk losing their game progress accidentally.
         check = input("Quitting will not save game progress, continue? (Y/N): ")
@@ -314,9 +389,8 @@ def execute_command(command):
         #if they entered something, otherwise, repeat the question
         if checkvalue == 'y' or checkvalue == 'yes': #We can now check the two values easily
             quit() #Only quit if they said yes
-
     else:
-        print("This makes no sense.")
+        print_wait("This makes no sense.")
 def menu(exits, room_items, inv_items):
     """This function, given a dictionary of possible exits from a room, and a list
     of items found in the room and carried by the player, prints the menu of
@@ -331,13 +405,10 @@ def menu(exits, room_items, inv_items):
 
     # Read player's input
     user_input = input("> ")
-
     # Normalise the input
     normalised_user_input = normalise_input(user_input)
 
     return normalised_user_input
-
-
 def move(exits, direction):
     """This function returns the room into which the player will move if, from a
     dictionary "exits" of avaiable exits, they choose to move towards the exit
@@ -353,25 +424,22 @@ def move(exits, direction):
 
     # Next room to go to
     return rooms[exits[direction]]
-
-
 # This is the entry point of our program
 def main():
 
     # Main game loop
     while True:
-        # Display game status (room description, inventory etc.)
-        print_room(current_room)
-        print_inventory_items(inventory)
+            # Display game status (room description, inventory etc.)
+            print_room(player.current_room)
+            print_inventory_items(player.inventory)
 
-        # Show the menu with possible actions and ask the player
-        command = menu(current_room["exits"], current_room["items"], inventory)
+            # Show the menu with possible actions and ask the player
+            command = menu(player.current_room["exits"], player.current_room["items"], player.inventory)
 
-        # Execute the player's command
-        execute_command(command)
+            # Execute the player's command
+            execute_command(command)
 
-
-
+            fix_exits()
 # Are we being run as a script? If so, run main().
 # '__main__' is the name of the scope in which top-level code executes.
 # See https://docs.python.org/3.4/library/__main__.html for explanation
