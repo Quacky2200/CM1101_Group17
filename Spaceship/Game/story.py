@@ -158,12 +158,12 @@ character_hunter = {
     'items': [item_boots]
     }
 # character_tribe = {
-    'name': 'Chief Powhatan',
+    # 'name': 'Chief Powhatan',
 
-    'description': 'Speaks nonsense, we simply can\'t understand what he says, but for some reason we trust him',
+    # 'description': 'Speaks nonsense, we simply can\'t understand what he says, but for some reason we trust him',
 
-    'items': []
-    }
+    # 'items': []
+    # }
 character_barman = {
     'name': 'Barman',
 
