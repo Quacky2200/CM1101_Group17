@@ -434,9 +434,9 @@ conversation_manager = {
 							'who': character_manager['name'],
 							'output': 'What\'d you expect? They\'re free!'
 						}],
-						['Your mum, she was bad in bed last night', {
+						['You\'re customer service is terrible', {
 							'who': character_manager['name'],
-							'output': 'How dare you!'
+							'output': 'I totally agree'
 						}],
 						['You', {
 							'who': character_manager['name'], 
@@ -532,9 +532,9 @@ def talk(conversation):
 					print('')
 					print('')
 					quit()
-				# except:
-				#     print('\nInvalid option!\n')
-				#     talk(conversation)
+				except:
+				    print('\nInvalid option!\n')
+				    talk(conversation)
 		elif type(conversation['output'] == str):
 			#If the origional output is just a string then the conversation leads no where, we say our stuff and go...
 			player.print_wait('[' + conversation['who'] + ']: ' + conversation['output'])
