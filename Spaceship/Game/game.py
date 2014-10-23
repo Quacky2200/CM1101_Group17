@@ -45,14 +45,16 @@ def return_converse(text):
 def fix_exits():
     for room in rooms:
         for direction, leads_to in rooms[room]['exits'].items():
-            if not return_converse(direction) in rooms[leads_to]['exits']:
-                rooms[leads_to]['exits'][return_converse(direction)] = room
+            if leads_to in rooms.keys():
+                if not return_converse(direction) in rooms[leads_to]['exits']:
+                    rooms[leads_to]['exits'][return_converse(direction)] = room
+            else:
+                print_wait('WARNING: \'' + room + '\' doesn\'t exist, please add it to the rooms list')
 def item_in_inventory(item_id, enabled = ''):
     if enabled != '':
         return item_id in [item['id'] for item in player.inventory if enabled in item['enabled']]
     else:
         return item_id in [item['id'] for item in player.inventory]
-#Normal
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
     returns a comma-separated list of item names (as a string). For example:
@@ -226,6 +228,11 @@ def print_menu(exits, room_items, inv_items):
         print('DROP ' + item['id'].upper() + ' to drop your ' + item['id'])
     for item in [items for items in inv_items if 'use' in items['enabled']]:
         print('USE ' + item['id'].upper() + ' to use your ' + item['id'])
+    for item in player.inventory:
+        print('DESCRIBE ' + item['id'].upper() + ' to describe your ' + item['id'])
+    for character in player.current_room['characters']:
+        print('TALK TO ' + character['name'].replace(' ','').upper() + ' to talk to ' + character['name'])
+        print('DESCRIBE ' + character['name'].replace(' ', '').upper() + ' to describe ' + character['name'])
     print("What do you want to do?")
 def is_valid_exit(exits, chosen_exit):
     """This function checks, given a dictionary "exits" (see map.py) and
@@ -253,15 +260,15 @@ def execute_item_action(item_id, action, item_id2 = ''):
                     itemaction[action](item_id, item_id2)
                 else:
                     itemaction[action]()
-def execute_character_action(charactername, action, item_id = ''):
-    if charactername in character_actions.keys():
-        characteraction = character_actions[charactername]
+def execute_character_action(character, action, item_id = ''):
+    if character['name'] in character_actions.keys():
+        characteraction = character_actions[character['name']]
         if action in characteraction:
             if characteraction[action] != None and callable(characteraction[action]):
                 if item_id != '':
                     characteraction[action](item_id)
                 else:
-                    characteraction[action](charactername)
+                    characteraction[action](character['conversation'])
 def execute_room_action(action):
     if player.current_room['name'] in room_actions.keys():
         roomaction = room_actions[player.current_room['name']]
@@ -278,7 +285,10 @@ def execute_go(direction):
         #Run 'out' action if there is one 
         execute_room_action('out')
         #Swap rooms
-        player.current_room = move(player.current_room['exits'], direction)
+        try:
+            player.current_room = move(player.current_room['exits'], direction)
+        except:
+            pass    #Shouldn't have passed this, but how else are we gonna change rooms secretly in the 'out' event? :S
         #Run the 'in' action if there is one
         execute_room_action('in')
     else:
@@ -292,12 +302,12 @@ def execute_take(item_id):
     for item in [items for items in player.current_room['items'] if take in items['enabled']]:
         tempinventory = player.inventory[:]
         tempinventory.append(item)
-        if item['id'] == item_id and weight_of_items(tempinventory) < max_weight and len(player.inventory) < 4:
+        if item['id'] == item_id and weight_of_items(tempinventory) < player.max_weight and len(player.inventory) < 4:
             player.inventory.append(item)
             player.current_room['items'].remove(item)
             execute_item_action(item['id'], 'take')
             return
-        elif item['id'] == item_id and weight_of_items(tempinventory) > max_weight or len(player.inventory) == 4:
+        elif item['id'] == item_id and weight_of_items(tempinventory) > player.max_weight or len(player.inventory) == 4:
             print('You only have 2 hands (and a full bag)')
             return
     print('You cannot take that.')
@@ -311,31 +321,43 @@ def execute_drop(item_id):
             player.current_room['items'].append(item)
             player.inventory.remove(item)
             execute_item_action(item['id'], 'drop')
+            execute_room_action('recieve')
             return
     print('You cannot drop that.')
 def execute_give(item_id, person):
     if item_in_inventory(item_id):
         for character in player.current_room['characters']:
             if character['name'].replace(' ', '').lower() == person:
-                execute_character_action(character['name'],'give', item_id)
+                execute_character_action(character,'give', item_id)
                 return
-    print('You cannot give that')
+    print('You cannot give that.')
 def execute_use(item_id1, item_id2 = ''):
     if item_id2 != '':
         if item_in_inventory(item_id1, use) and item_in_inventory(item_id2, use):
-            return_item_action(item_id1, use, item_id2)
+            execute_item_action(item_id1, use, item_id2)
             return
     else:
         if item_in_inventory(item_id1, use):
             execute_item_action(item_id1, use)
             return
-    print('You cannot use that')
+    print('You cannot use that.')
 def execute_talk(person):
     for character in player.current_room['characters']:
         if character['name'].replace(' ','').lower() == person:
-            execute_character_action(character['name'],'talk')
+            execute_character_action(character,'talk')
             return
     print('Who\'s that?')
+def execute_describe(item_id):
+    if item_in_inventory(item_id):
+        for item in player.inventory:
+            if item['id'] == item_id:
+                print(item['description'])
+                return
+    for character in player.current_room['characters']:
+        if character['name'].replace(' ', '').lower() == item_id:
+            print(character['description'])
+            return
+    print('You cannot describe that.')
 def execute_command(command):
     """This function takes a command (a list of words as returned by
     normalise_input) and, depending on the type of action (the first word of
@@ -381,6 +403,11 @@ def execute_command(command):
             execute_talk(command[1])
         else:
             print_wait('Talk to whom?')
+    elif command[0] == 'describe':
+        if len(command) > 1:
+            execute_describe(command[1])
+        else:
+            print_wait('Describe what?')
     elif command[0] == "quit":
         #Check if the player wants to continue, otherwise they risk losing their game progress accidentally.
         check = input("Quitting will not save game progress, continue? (Y/N): ")
@@ -402,9 +429,16 @@ def menu(exits, room_items, inv_items):
 
     # Display menu
     print_menu(exits, room_items, inv_items)
-
-    # Read player's input
-    user_input = input("> ")
+    try:
+        # Read player's input
+        user_input = input("> ")
+    except (KeyboardInterrupt, SystemExit):
+        print('')
+        print('')
+        print('')
+        quit()
+    except:
+        menu(exits, room_items, inv_items)
     # Normalise the input
     normalised_user_input = normalise_input(user_input)
 
@@ -426,9 +460,9 @@ def move(exits, direction):
     return rooms[exits[direction]]
 # This is the entry point of our program
 def main():
-
     # Main game loop
     while True:
+            fix_exits()
             # Display game status (room description, inventory etc.)
             print_room(player.current_room)
             print_inventory_items(player.inventory)
@@ -438,8 +472,6 @@ def main():
 
             # Execute the player's command
             execute_command(command)
-
-            fix_exits()
 # Are we being run as a script? If so, run main().
 # '__main__' is the name of the scope in which top-level code executes.
 # See https://docs.python.org/3.4/library/__main__.html for explanation

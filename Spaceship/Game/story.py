@@ -17,6 +17,30 @@ item_rum = {
     'enabled': [take, drop, use, give]
 
     }
+item_beer = {
+    'id': 'beer',
+
+    'name': 'a bottle of beer',
+
+    'description':'a frothy alcoholic beverage',
+
+    'weight': '500G',
+
+    'enabled': [take, drop, use, give]
+
+    }
+item_pepper = {
+    'id': 'pepper',
+
+    'name': 'a bottle of Dr Pepper',
+
+    'description':'a non-alcoholic fizzy drink',
+
+    'weight': '500G',
+
+    'enabled': [take, drop, use, give]
+
+    }
 item_money = {
     'id': 'money',
 
@@ -39,17 +63,7 @@ item_boots = {
 
     'enabled': [take, drop, use, give]
     }
-item_pump = {
-    'id': 'pump',
 
-    'name': 'a petrol pump',
-
-    'description':'Provides a costly service',
-
-    'weight': '500G',
-
-    'enabled': [take, drop, use, give]
-    }
 item_fueltank = {
     'id': 'fueltank',
 
@@ -61,6 +75,7 @@ item_fueltank = {
 
     'enabled': [take, drop, use, give]
     }
+
 item_fuelcanister = {
     'id': 'fuelcanister',
 
@@ -72,6 +87,7 @@ item_fuelcanister = {
 
     'enabled': [take, drop, use, give]
     }
+
 item_map = {
     'id': 'map',
 
@@ -83,6 +99,7 @@ item_map = {
 
     'enabled': [take, drop, use, give]
     }
+
 item_scrapmetal = {
     'id': 'scrapmetal',
 
@@ -94,6 +111,7 @@ item_scrapmetal = {
 
     'enabled': [take, drop, use, give]
     }
+
 item_rivetgun = {
     'id': 'rivetgun',
 
@@ -105,6 +123,7 @@ item_rivetgun = {
 
     'enabled': [take, drop, use, give]
     }
+
 item_torch = {
     'id': 'torch',
 
@@ -123,156 +142,116 @@ character_sailor = {
     'description': 'A drunk babbling sailor',
 
     'items': [item_money, item_map]
-}
+    }
 character_mayor = {
     'name': 'Quimby',
 
     'description': 'Proud of his town and the ambitions he wants to aspire to',
 
-    'items': []
-}
+    'items': [item_fuelcanister]
+    }
 character_hunter = {
     'name': 'Rodney',
 
     'description': 'Proud of his wooden cabin and all the animals he has killed',
 
     'items': [item_boots]
-}
-character_tribe = {
+    }
+# character_tribe = {
     'name': 'Chief Powhatan',
 
     'description': 'Speaks nonsense, we simply can\'t understand what he says, but for some reason we trust him',
 
     'items': []
-}
-# character_engineer = {
-#     'name': 'Max',
-
-#     'description': '',
-
-#     'items': []
-# }
-# character_scientist = {
-#     'name': 'Arthur',
-
-#     'description': '',
-
-#     'items': []
-# }
+    }
 character_barman = {
     'name': 'Barman',
 
     'description': 'Loves local gossip and gives bad relationship advice.',
 
     'items': [item_rum]
+    }
+character_manager = {
+    'name': 'Manager',
+
+    'description': 'Handles customer requests. In his spare time, plays golf.',
+
+    'items': []
 }
 #Rooms now need to be added (least important - children first)
+room_blindlydark = {
+    'name': 'explore',
+
+    'description': 'You stumble, fall and then feel helpless without light. You return to the forest...', 'exits':{}, 'items':[], 'characters':[]
+}
 room_mountain = {
     'name': 'the Mountains',
 
     'description': """The mountain spans for miles around you, high snow-covered peaks surround a small camp where 
-    the Tribes' people are hiding. Large pens are visible, clearly herding mountain goats and other animals for the
-    Tribes people to use in their day to day lives. """, 
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+the Tribes' people are hiding. Large pens are visible, clearly herding mountain goats 
+and other animals for the Tribes people to use in their day to day lives. """, 'exits': {}, 'items': [], 'characters': []
+    }
 room_shipwreck = {
     'name': 'the shipwreck',
 
     'description': """An old looking ship that must have come aground during a storm. The whole ship is rotting 
-    away in the sand, making the name impossible to read. This is a sad sight, maybe that drunk sailor knows more...""",
- 
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+away in the sand, making the name impossible to read. This is a sad sight, maybe that 
+drunk sailor knows more...""", 'exits': {}, 'items': [], 'characters': [character_sailor]
+    }
 room_pub = {
     'name': 'the Pub',
 
     'description': """An old western themed tavern with bar stools littered around the circle tables. A pool table in one corner
-    next to a jukebox playing what sounds like the theme from 'The Good, the Bad and the Ugly'. There's a crowd of people watching
-    a boxing match on the T.V., while one patron is passed out in a pool of his own sick... classy place, maybe the bar tender
-    can tell me more about this place... """,
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+next to a jukebox playing what sounds like the theme from 'The Good, the Bad and the Ugly'. 
+There's a crowd of people watching a boxing match on the T.V., while one patron is passed 
+out in a pool of his own sick... classy place, maybe the bar tender can tell me more about 
+this place... """, 'exits': {}, 'items': [], 'characters': [character_barman]
+    }
 room_scrapheap = {
     'name': 'the scrapheap',
 
-    'description': """There's a lot of scrap piles scattered around the yard. The owner must collect debris from 
-    crashed vehicles and sell them to customers as there are many clients wandering around the yard looking for 
-    spare parts. A large mechanical crusher is being operated at the end of the yard, crushing useless metals into
-    useable materials.""",
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+    'description': """There's a lot of scrap piles scattered around the yard. The owner 
+must collect debris from crashed vehicles and sell them to customers as there are many 
+clients wandering around the yard looking for spare parts. A large mechanical crusher is
+being operated at the end of the yard, crushing useless metals into useable materials.""", 'exits': {}, 'items': [item_fueltank, item_scrapmetal], 'characters': []
+    }
 room_hardware = {
     'name': 'the hardware store',
 
     'description': """A small store filled with items that may come in handy when repairing your ship, many other customers
-     are talking to what appears to be the owner about something or other. There is a large scrap yard out the back with 
-     all sorts of tools and spare parts lying about, maybe the owner or his engineers can help me fix the ship. """,
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+are talking to what appears to be the owner about something or other. There is a large 
+scrap yard out the back with all sorts of tools and spare parts lying about, maybe the 
+owner or his engineers can help me fix the ship. """, 'exits': {'north': room_scrapheap['name']}, 'items': [item_rivetgun], 'characters': [character_manager]
+    }
 room_mayorhouse = {
     'name': 'the Mayors house',
 
     'description': """The mayor of the town's house, looks like he is paid very well. His house is enormous with lavish
-    paintings of himself placed in pretty much every room, luxurious furniture everywhere... this man clearly has a lot of power
-    and likes to look at himself... a lot.""",
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+paintings of himself placed in pretty much every room, luxurious furniture everywhere... 
+this man clearly has a lot of power and likes to look at himself... a lot.""", 'exits': {}, 'items': [], 'characters': [character_mayor]
+    }
 room_cabin = {
     'name': 'the Cabin',
 
     'description':  """A hunter's cabin, fully decorated with trophies and hunting weapons from around the land. 
-    A large stag's head is mounted above the fireplace, obviously the hunter's prize catch. There is a meaty smell radiating from the fire,
-    the hunter must be cooking his latest catch. """,
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+A large stag's head is mounted above the fireplace, obviously the hunter's prize catch. 
+There is a meaty smell radiating from the fire, the hunter must be cooking his latest 
+catch. The crackle of the fire along with the warmth makes you feel safe. You eat dinner 
+and fall asleep on the sofa. It was a good night.""", 'exits': {}, 'items': [], 'characters': [character_hunter]
+    }
 room_caves = {
     'name': 'the Caves',
-
-    'description': """The cave is narrow to start with but expands out into a large cavern area where a tribe of people
-    are sat around a campfire cooking and chatting. The cave lights up as rays of sunshine enter the dark hole, illuminating
-    several tunnels that appear to have been blocked off. A strange smell is radiating from the centre of the camp, 
-    the Tribe must be cooking some exotic meal.""",
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+    'description': """You were able to move all of your crew to the entrance of the cave 
+where a tribe of people are sitting around a campfire; cooking and chatting. The cave lights 
+up from the firelight and moonlight. Everything feels comfortably warm, natural and harmonious. 
+A few of them start helping your wounded crew. You feel certain that they will be protected and 
+recover well, and that you will be able to start repairing the spaceship.""",
+#     'description': """The cave is narrow to start with but expands out into a large cavern area where a tribe of people
+# are sat around a campfire cooking and chatting. The cave lights up as rays of sunshine enter the dark hole, illuminating
+# several tunnels that appear to have been blocked off. A strange smell is radiating from the centre of the camp, 
+# the Tribe must be cooking some exotic meal.""",
+ 'exits': {}, 'items': [], 'characters': []
+    }
 room_beach = {
     'name': 'the Beach',
 
@@ -280,14 +259,8 @@ room_beach = {
 stopping at what looks like a small cliff with an old lighthouse, on the other side lies a wrecked old and 
 rusty fish boat that hasn't been used for a long time. The fisherman stands proud beside his boat; legs wobbly 
 whilst drinking the last drops from an old bottle, frequently mumbling and shouting about his rum and his boat.
-A very distinct fish and rum stench comes from him...""", 
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+A very distinct fish and rum stench comes from him...""", 'exits': {'inside':room_shipwreck['name']}, 'items': [], 'characters': []
+    }
 room_town = {
     'name': 'the Town',
 
@@ -295,14 +268,8 @@ room_town = {
 extenuated beach. A fish & chip shop is one of the most popular shops around with a queue as long as 2 shops. Most 
 other shops have closed for the day since it's a Sunday. Strangely enough, the hardware store and the bar are open 
 and the Mayor is very open to home visits. At the moment, the Mayor is in his house. Everyone else is busy enjoying
-the sun and are playing on the beach""", 
-
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+the sun and are playing on the beach""", 'exits': {'north':room_hardware['name'], 'west': room_pub['name'], 'south': room_mayorhouse['name']}, 'items': [], 'characters': []
+    }
 room_forest = {
     'name': 'the Forest',
 
@@ -311,12 +278,8 @@ other animals. Subtle gushing sounds are sometimes heard. Haunting shadows cast 
 dancing fire surrounding the spaceship. An infused stench of hair and skin surrounds the spaceship. Looking 
 around you, not much is visible. You can hardly see anything. Many rocks and shrubs surround you.""", 
 
-    'exits': {},
-
-    'items': [],
-
-    'characters': []
-}
+    'exits': {'north':room_blindlydark['name'], 'east': room_blindlydark['name'], 'south':room_blindlydark['name'], 'west':room_blindlydark['name']}, 'items': [], 'characters': []
+    }
 room_spaceship = {
     'name': 'the Spaceship',
 
@@ -339,19 +302,13 @@ possible, pinpoint your location and fly back.""",
 
     'characters': []}
 #Add the rooms to the list, for simplicity, we use names of the rooms themselves instead of remembering our own made-up ones
-rooms = {
-    room_spaceship['name']: room_spaceship,
-    room_forest['name']: room_forest,
-    room_caves['name']: room_caves,
-    room_cabin['name']: room_cabin,
-    room_town['name']: room_town,
-    room_beach['name']: room_beach,
-    room_shipwreck['name']: room_shipwreck,
-    room_pub['name']: room_pub,
-    room_hardware['name']: room_hardware,
-    room_mayorhouse['name']: room_mayorhouse,
-    room_mountain['name']: room_mountain}
+rooms = {}
+def SyncRooms():
+    for variable in globals():
+        if 'room_' in variable and not variable in rooms:
+            rooms[globals()[variable]['name']] = globals()[variable]
+SyncRooms()
 #Add the certain items we want in our inventory
 player.inventory = [item_torch]
 #Let's add the current room to load up
-player.current_room = rooms[room_spaceship['name']]
+player.current_room = room_spaceship
