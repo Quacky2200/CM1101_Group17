@@ -157,7 +157,6 @@ room_actions = {
     }
 
 character_actions = {
-    character_tribe['name']: {'talk': talk},
     character_barman['name']: {'talk': talk},
     character_mayor['name']: {'talk': talk},
     character_sailor['name']: {'give': None, 'talk': talk},

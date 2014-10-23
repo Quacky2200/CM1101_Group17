@@ -490,7 +490,6 @@ conversation_manager = {
 character_hunter['conversation'] = conversation_hunter_attack
 character_mayor['conversation'] = conversation_mayor
 character_barman['conversation'] = conversation_barman
-character_tribe['conversation'] = conversation_tribe
 character_sailor['conversation'] = conversation_sailor
 character_manager['conversation'] = conversation_manager
 def talk(conversation):
