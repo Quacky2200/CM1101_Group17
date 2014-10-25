@@ -1,10 +1,11 @@
 from story import *
 import player
 import random
+from time import sleep
 def give_map():
 	if not item_map in player.inventory:
 		player.inventory.append(item_map)
-		print('Here\'s something for your troubles.\nYou\'ve given a Map!')
+		print('Here\'s something for your troubles.\nYou have been given a Map!')
 def sailor_give_money():
 	if not item_money in player.inventory:
 		player.inventory.append(item_money)
@@ -27,10 +28,7 @@ def use_money(sellableitem, amount):
 conversation_sailor_questions_unlocked = {
 	'who': player.username,
 	'output': [
-		['I need help! My spaceship needs repairing can you help me?', {
-			'who': character_sailor['name'],
-			'output': 'Who do I look like? Your alien engineer?'
-		}],
+		['I need help! My spaceship needs repairing can you help me?', {'who': character_sailor['name'],'output': ['Who do I look like? Your alien engineer?', give_map]}],
 		['Do you know where I can get some tools?', {'who': character_sailor['name'], 'output':['You can find some at the hardware store in town.', give_map]}],
 		['What happened to your boat?', {'who': character_sailor['name'], 'output':['I used to be great at fishing, I even had my own business but then that went down hill when \nI fell in love and then she left me. Now I just drink to get rid of the pain.', give_map]}],
 		['Can I use parts of your boat?', {'who': character_sailor['name'], 'output':['Sorry, you can\'t have this beauty, find some metal somewhere else!', give_map]}]
@@ -240,9 +238,6 @@ def find_hunter_name():
 	room_forest['description'] = 'The sunlight shines through the trees casting dusty light waves in parts of the forest; \nshowing what was once invisible. Insects and birds can be heard in the distance. \nThe stench has since dissipated.'
 	room_spaceship['description'] = 'The spaceship that I crashed in, it\'s in a bad state and needs to be fixed \nbefore I can help my crewmates and call for help. Looks like I need a new \nfuel tank and some metal to fix this giant hole!'
 	talk(conversation_hunter_find_name)
-def fix_scrap():
-	if item_scrapmetal in player.inventory:
-		item_scrapmetal['description'] = 'This should work on my spaceship now'
 conversation_hunter_attack = {
 	'who': 'Stranger',
 	'output': ['You need to be careful! It\'s dangerous at night!', {
@@ -369,7 +364,7 @@ conversation_sailor = {
 		]
 	}]
 	}
-# conversation_tribe = {}
+conversation_tribe = {'who':character_tribe['name'], 'output': 'Pay for crew, no pay, no crew...'}
 conversation_mayor = {
 	'who': character_mayor['name'],
 	'output': ['WELCOME ' + player.username.upper() + '! I hope your finding the town enjoyable!', {
@@ -416,6 +411,8 @@ conversation_mayor = {
 		}]
 	}]
 	}
+def manager_cash():
+	print('Looks like the cash register won\'t work for a while')
 conversation_manager = {
 	'who': character_manager['name'],
 	'output': ['How can I help you?', {
@@ -423,7 +420,7 @@ conversation_manager = {
 		'output': [
 			['I\'d like to buy something', {
 				'who': character_manager['name'],
-				'output': 'My cash register isn\'t working, wait a minute'
+				'output': ['My cash register isn\'t working, wait a minute', manager_cash]
 			}],
 			['I\'d like to complain', {
 				'who': character_manager['name'],
@@ -487,6 +484,7 @@ conversation_manager = {
 		]
 	}]
 	}
+character_tribe['conversation'] = conversation_tribe
 character_hunter['conversation'] = conversation_hunter_attack
 character_mayor['conversation'] = conversation_mayor
 character_barman['conversation'] = conversation_barman
@@ -520,7 +518,7 @@ def talk(conversation):
 					i += 1
 				#Make the use choose an option
 				try:
-					number = int(input('Choose an option (1-4): '))
+					number = int(input('Choose an option (1-' + str(i) + '): '))
 					print('')
 					print('[' + conversation['who'] + ']: ' + conversation['output'][(number - 1)][0])
 					print('')
@@ -532,13 +530,17 @@ def talk(conversation):
 					print('')
 					print('')
 					quit()
-				except:
-				    print('\nInvalid option!\n')
-				    talk(conversation)
+				except ValueError:
+					print('\nInvalid option!\n')
+					talk(conversation)
+				except IndexError:
+					print('No such option!')
+					talk(conversation)
 		elif type(conversation['output'] == str):
 			#If the origional output is just a string then the conversation leads no where, we say our stuff and go...
-			player.print_wait('[' + conversation['who'] + ']: ' + conversation['output'])
+			print('[' + conversation['who'] + ']: ' + conversation['output'])
 			print('')
+			return
 	else:
 		print(':[ He\'s dead jim!')
 # conversation_test2 = {

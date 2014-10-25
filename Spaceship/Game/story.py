@@ -129,7 +129,7 @@ item_torch = {
 
     'name': 'a torch',
 
-    'description': 'Doesn\'t do much in a text-based adventure game',
+    'description': 'Low battery - Off',
 
     'weight': '30G',
 
@@ -157,13 +157,13 @@ character_hunter = {
 
     'items': [item_boots]
     }
-# character_tribe = {
-    # 'name': 'Chief Powhatan',
+character_tribe = {
+    'name': 'Chief Powhatan',
 
-    # 'description': 'Speaks nonsense, we simply can\'t understand what he says, but for some reason we trust him',
+    'description': 'An angry leader of the tribe, always taking advantage of the general public',
 
-    # 'items': []
-    # }
+    'items': []
+    }
 character_barman = {
     'name': 'Barman',
 
@@ -189,7 +189,9 @@ room_mountain = {
 
     'description': """The mountain spans for miles around you, high snow-covered peaks surround a small camp where 
 the Tribes' people are hiding. Large pens are visible, clearly herding mountain goats 
-and other animals for the Tribes people to use in their day to day lives. """, 'exits': {}, 'items': [], 'characters': []
+and other animals for the Tribes people to use in their day to day lives. A leader of
+the group comes up to you and expects something in return for the care they have given
+to your crew. You cannot leave without your crew.""", 'exits': {}, 'items': [], 'characters': [character_tribe]
     }
 room_shipwreck = {
     'name': 'the shipwreck',
