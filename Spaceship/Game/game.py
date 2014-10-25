@@ -372,9 +372,6 @@ def main():
 
             # Show the menu with possible actions and ask the player
             command = menu(player.current_room["exits"], player.current_room["items"], player.inventory)
-            if 'break' in command:
-                break
-                return
             # Execute the player's command
             execute_command(command)
 # Are we being run as a script? If so, run main().
